@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:metrics="http://www.ryantenney.com/schema/metrics"
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics.xsd">
+
+    <context:property-placeholder location="resources.properties" file-encoding="UTF-8"/>
+
+    <bean id="somethingDoer" class="SomethingDoer">
+        <constructor-arg index="0" value="${n:5000}"/>
+        <property name="simpleMeter" ref="simpleMeter"/>
+    </bean>
+
+    <metrics:metric-registry id="inSpringMetricRegistry" name="spring-metrics"/>
+
+    <metrics:reporter id="slf4jReporter" metric-registry="inSpringMetricRegistry" enabled="true" type=""/>
+
+    <metrics:annotation-driven metric-registry="inSpringMetricRegistry"/>
+
+    <bean id="simpleMeter" class="com.codahale.metrics.Meter"/>
+
+</beans>
