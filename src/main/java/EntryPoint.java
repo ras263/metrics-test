@@ -21,8 +21,9 @@ import static com.codahale.metrics.MetricRegistry.name;
 public class EntryPoint {
 
 	private static final MetricRegistry metrics = new MetricRegistry();
-	public static final Meter somethingDoing = metrics.meter("something.doing");
-	public static final Timer timer = metrics.timer(name(SomethingDoer.class, "something.doing.timer"));
+	public static final Meter somethingDoing = metrics.meter(name(SomethingDoer.class.getSimpleName(), "something.doing"));
+	public static final Timer timer = metrics.timer(name(SomethingDoer.class.getSimpleName(), "something.doing.timer"));
+	public static final Counter counter = metrics.counter(name(SomethingDoer.class.getSimpleName(), "something.doing.counter"));
 
 	public static final Logger LOG = LoggerFactory.getLogger(EntryPoint.class);
 
@@ -54,7 +55,7 @@ public class EntryPoint {
 	}
 
 
-	public static void verySimpleTest(int n) {
+	private static void verySimpleTest(int n) {
 		try {
 			SomethingDoer doer = new SomethingDoer(n);
 			doer.doingSomething();

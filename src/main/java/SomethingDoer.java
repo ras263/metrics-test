@@ -1,5 +1,3 @@
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +16,6 @@ import java.util.Random;
  * @since 0.1.0
  */
 public class SomethingDoer {
-
-	Timer.Context timerContext;
 
 	private static final Logger LOG = LoggerFactory.getLogger(SomethingDoer.class);
 
@@ -41,13 +37,15 @@ public class SomethingDoer {
 	}
 
 	private int returnSomeIntAndSleep() throws InterruptedException {
+		int someInt = 0;
 		EntryPoint.somethingDoing.mark();
-		timerContext = EntryPoint.timer.time();
-		int someInt = (new Random()).nextInt(10);
-		int sleepTimeout = (new Random()).nextInt(100);
-		LOG.info("Generate number {}. Sleeping for {} ms and then return number.", someInt, sleepTimeout);
-		Thread.sleep(sleepTimeout);
-		timerContext.stop();
+		EntryPoint.counter.inc();
+		try (Timer.Context timerContext = EntryPoint.timer.time()){
+			someInt = (new Random()).nextInt(10);
+			int sleepTimeout = (new Random()).nextInt(100);
+			LOG.info("Generate number {}. Sleeping for {} ms and then return number.", someInt, sleepTimeout);
+			Thread.sleep(sleepTimeout);
+		}
 		return someInt;
 	}
 
